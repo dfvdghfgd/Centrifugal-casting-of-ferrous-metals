@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЦентроЛит — Центробежное литьё ЧМ</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Mulish:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --card: #1a1a24;
+    --accent: #e8602a;
+    --accent2: #f4a044;
+    --text: #f0ede8;
+    --muted: #888;
+    --border: rgba(255,255,255,0.07);
+    --red: #c0392b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Mulish', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 0;
+  }
+  .logo {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1rem;
+    color: var(--accent);
+    padding: 1.1rem 0;
+    margin-right: 2.5rem;
+    letter-spacing: 0.03em;
+  }
+  .nav-links { display: flex; gap: 0; flex-wrap: wrap; }
+  .nav-links button {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Mulish', sans-serif;
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding: 1.1rem 1rem;
+    transition: color 0.2s;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .nav-links button:hover, .nav-links button.active { color: var(--text); }
+  .nav-links button.active {
+    border-bottom: 2px solid var(--accent);
+    color: var(--accent);
+  }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero {
+    min-height: 90vh;
+    display: flex; align-items: center;
+    position: relative; overflow: hidden;
+    padding: 6rem 4rem 4rem;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, #5a1a0a 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 20% 80%, #1a0a00 0%, transparent 60%);
+  }
+  .grid-lines {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-content { position: relative; max-width: 700px; }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(232,96,42,0.15);
+    border: 1px solid rgba(232,96,42,0.3);
+    color: var(--accent);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    font-size: 1.05rem;
+    color: rgba(240,237,232,0.7);
+    max-width: 520px;
+    margin-bottom: 2.5rem;
+  }
+  .hero-stats {
+    display: flex; gap: 3rem; flex-wrap: wrap;
+  }
+  .stat-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 2rem;
+    color: var(--accent);
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* SECTIONS */
+  .section { padding: 5rem 4rem; max-width: 1100px; margin: 0 auto; }
+  .section-tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  .section h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    margin-bottom: 3rem;
+    letter-spacing: -0.02em;
+  }
+
+  /* ABOUT PAGE */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  .about-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    border-radius: 4px;
+  }
+  .about-card h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+  .about-card p { font-size: 0.9rem; color: rgba(240,237,232,0.75); }
+  .about-main {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 2rem;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    color: rgba(240,237,232,0.8);
+  }
+
+  /* TECH PAGE */
+  .process-steps {
+    display: flex; flex-direction: column; gap: 0;
+    position: relative;
+  }
+  .step {
+    display: flex; gap: 2rem; align-items: flex-start;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 3rem;
+    color: rgba(232,96,42,0.15);
+    line-height: 1;
+    min-width: 70px;
+    font-weight: 700;
+  }
+  .step-content h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+  .step-content p { font-size: 0.9rem; color: rgba(240,237,232,0.7); }
+  .params-table {
+    width: 100%; margin-top: 3rem;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .params-table th {
+    background: var(--card);
+    color: var(--accent);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 1rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .params-table td {
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    color: rgba(240,237,232,0.8);
+  }
+  .params-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* PRODUCTS PAGE */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .product-card {
+    background: rgba(0,0,0,0);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .product-card:hover { border-color: rgba(232,96,42,0.4); }
+  .product-visual {
+    height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #efefef;
+    filter: contrast(1.05) saturate(0.9);
+  }
+  .product-icon {
+    font-size: 4rem;
+    position: relative; z-index: 1;
+  }
+  .product-info { padding: 1.5rem; }
+  .product-info h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
+  }
+  .spec-row {
+    display: flex; justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-label { color: var(--muted); }
+  .spec-val { color: var(--text); font-weight: 400; }
+
+  /* CUSTOM PAGE */
+  .custom-intro {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+    margin-bottom: 3rem; align-items: start;
+  }
+  .custom-intro p { font-size: 0.95rem; color: rgba(240,237,232,0.75); }
+  .custom-options {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .option-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+  }
+  .option-card:hover { border-color: rgba(232,96,42,0.3); }
+  .option-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  .option-card h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.78rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.04em;
+  }
+  .option-card p { font-size: 0.82rem; color: rgba(240,237,232,0.65); }
+  .limits-box {
+    margin-top: 2.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    padding: 1.75rem 2rem;
+    border-radius: 4px;
+  }
+  .limits-box h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.82rem;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+    letter-spacing: 0.04em;
+  }
+  .limits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .limit-item { font-size: 0.85rem; }
+  .limit-item strong {
+    display: block;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.1rem;
+    color: var(--accent2);
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+  }
+  .limit-item span { color: var(--muted); font-size: 0.78rem; }
+
+  /* CONTACTS PAGE */
+  .contacts-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+    align-items: start;
+  }
+  .contact-item {
+    display: flex; gap: 1.25rem; align-items: flex-start;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .contact-item:last-child { border-bottom: none; }
+  .contact-icon {
+    width: 36px; height: 36px;
+    background: rgba(232,96,42,0.1);
+    border: 1px solid rgba(232,96,42,0.2);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .contact-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .contact-val { font-size: 0.95rem; }
+  .map-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    height: 400px;
+  }
+  .map-container iframe {
+    width: 100%; height: 100%; border: none;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.78rem; color: var(--muted);
+  }
+  .footer-logo {
+    font-family: 'Unbounded', sans-serif;
+    color: var(--accent);
+    font-size: 0.85rem;
+  }
+
+  /* VISUAL DECORATIONS */
+  .pipe-visual {
+    background: linear-gradient(135deg, #1a1208 0%, #2d1a08 50%, #1a0a00 100%);
+  }
+  .disk-visual {
+    background: linear-gradient(135deg, #0a0f1a 0%, #0a1524 50%, #0a0a14 100%);
+  }
+  .roll-visual {
+    background: linear-gradient(135deg, #0f1a0a 0%, #142408 50%, #0a1400 100%);
+  }
+  .pipe-shape {
+    width: 120px; height: 80px;
+    border: 6px solid #888;
+    border-radius: 40px;
+    background: linear-gradient(90deg, #555 0%, #999 40%, #666 60%, #aaa 80%, #777 100%);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+  }
+  .disk-shape {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #aaa, #666, #333);
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.5);
+    position: relative;
+  }
+  .disk-shape::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: #1a1a24;
+  }
+  .roll-shape {
+    width: 70px; height: 100px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #555 0%, #999 30%, #bbb 50%, #888 70%, #666 100%);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+  }
+
+  @media(max-width: 700px) {
+    .section { padding: 3rem 1.5rem; }
+    .hero { padding: 4rem 1.5rem 3rem; }
+    .about-grid { grid-template-columns: 1fr; }
+    .contacts-grid { grid-template-columns: 1fr; }
+    .custom-intro { grid-template-columns: 1fr; }
+    .limits-grid { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+    nav { padding: 0 1rem; }
+    .logo { font-size: 0.85rem; margin-right: 1rem; }
+    .nav-links button { font-size: 0.68rem; padding: 1rem 0.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">ЦентроЛит</div>
+  <div class="nav-links">
+    <button class="active" onclick="showPage('home', this)">Главная</button>
+    <button onclick="showPage('tech', this)">Технология</button>
+    <button onclick="showPage('products', this)">Продукция</button>
+    <button onclick="showPage('custom', this)">Кастомизация</button>
+    <button onclick="showPage('contacts', this)">Контакты</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="grid-lines"></div>
+    <div class="hero-content">
+      <h1>Центробежное<br>литьё <span>чёрных металлов</span></h1>
+      <p>Производство высококачественных отливок из чугуна и стали методом центробежного литья. Точность геометрии, однородность структуры, минимум дефектов.</p>
+      <div class="hero-stats">
+        <div>
+          <span class="stat-num">98%</span>
+          <span class="stat-label">Использование металла</span>
+        </div>
+        <div>
+          <span class="stat-num">300–5000</span>
+          <span class="stat-label">Об/мин — диапазон вращения</span>
+        </div>
+        <div>
+          <span class="stat-num">1450°C</span>
+          <span class="stat-label">Температура заливки чугуна</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="section-tag">О проекте</p>
+    <h2>Что такое центробежное литьё?</h2>
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>Принцип метода</h3>
+        <p>Расплавленный металл заливается во вращающуюся форму. Под действием центробежных сил он прижимается к стенкам, формируя отливку с плотной внешней поверхностью и полым центром.</p>
+      </div>
+      <div class="about-card">
+        <h3>Чёрные металлы (ЧМ)</h3>
+        <p>К чёрным металлам относятся железо и его сплавы — чугун и сталь. Их высокая плотность, прочность и доступность делают их основным материалом машиностроения.</p>
+      </div>
+      <div class="about-card">
+        <h3>Преимущества</h3>
+        <p>Высокая механическая прочность отливок, мелкозернистая структура, отсутствие усадочных раковин, возможность получения труб и колец без механической обработки внутренней поверхности.</p>
+      </div>
+      <div class="about-card">
+        <h3>Применение</h3>
+        <p>Трубопроводы, цилиндры двигателей, кольца подшипников, тормозные диски, прокатные валки — любые тела вращения из чёрных металлов.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TECH -->
+<div class="page" id="page-tech">
+  <div class="section">
+    <p class="section-tag">Технология производства</p>
+    <h2>Этапы центробежного литья ЧМ</h2>
+    <div class="process-steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Подготовка металла и расплава</h3>
+          <p>Шихтовые материалы (чугунный лом, возврат собственного производства, ферросплавы) загружаются в вагранку или электродуговую печь. Чугун плавится при температуре 1250–1450°C, сталь — 1550–1650°C. Проводится раскисление и легирование расплава по требуемому химическому составу.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Подготовка изложницы и машины</h3>
+          <p>Металлическая форма (изложница) покрывается огнеупорным покрытием или краской для предотвращения прилипания металла и регулирования скорости охлаждения. Устанавливается на горизонтальную или вертикальную центробежную машину. Форма прогревается до 200–300°C для снижения термического удара.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Заливка металла при вращении</h3>
+          <p>Изложница раскручивается до рабочей скорости (300–5000 об/мин — зависит от диаметра и сплава). Расплав подаётся через желоб или ковш дозированно. Центробежная сила прижимает металл к стенкам формы с давлением, в десятки раз превышающим атмосферное, — это обеспечивает плотную, беспористую отливку.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Затвердевание и охлаждение</h3>
+          <p>Металл кристаллизуется в движении — наружный слой охлаждается быстрее, формируя мелкозернистую структуру с высокой твёрдостью. Вращение продолжается до полного затвердевания (1–15 минут). Затем изложница замедляется, отливка извлекается краном или выталкивателем.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <h3>Термическая обработка и контроль</h3>
+          <p>Отливки проходят отжиг или нормализацию для снятия остаточных напряжений. Проводится ультразвуковой контроль, измерение твёрдости (HB, HRC), проверка геометрии. Финальная механическая обработка токарным станком обеспечивает чистоту поверхности по Ra 1,6–3,2 мкм.</p>
+        </div>
+      </div>
+    </div>
+
+    <table class="params-table" style="margin-top:3rem;">
+      <thead>
+        <tr>
+          <th>Параметр</th>
+          <th>Чугун (СЧ20)</th>
+          <th>Сталь (20Л)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Температура заливки</td><td>1280–1350 °C</td><td>1580–1620 °C</td></tr>
+        <tr><td>Скорость вращения</td><td>600–1200 об/мин</td><td>400–900 об/мин</td></tr>
+        <tr><td>Коэффициент гравитации (G)</td><td>60–120 g</td><td>40–80 g</td></tr>
+        <tr><td>Покрытие изложницы</td><td>Маршалит + жидкое стекло</td><td>Циркон + жидкое стекло</td></tr>
+        <tr><td>Время затвердевания</td><td>2–8 мин</td><td>5–15 мин</td></tr>
+        <tr><td>Термическая обработка</td><td>Отжиг 650–700 °C</td><td>Нормализация 880–920 °C</td></tr>
+        <tr><td>Прочность на растяжение</td><td>200–300 МПа</td><td>400–600 МПа</td></tr>
+        <tr><td>Твёрдость</td><td>163–229 HB</td><td>130–185 HB</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="page" id="page-products">
+  <div class="section">
+    <p class="section-tag">Номенклатура продукции</p>
+    <h2>Примеры производимых отливок</h2>
+    <div class="products-grid">
+
+      <div class="product-card">
+        <div class="product-visual pipe-visual">
+          <img class="product-image" src="https://metallurg-moskva.ru/upload/iblock/99f/730zxu3tk1yxr3cjhrimx536xwmbz19w.jpeg" alt="Чугунные трубы">
+        </div>
+        <div class="product-info">
+          <h3>Чугунные трубы водопроводные</h3>
+          <div class="spec-row"><span class="spec-label">Материал</span><span class="spec-val">СЧ20, ВЧШГ-400</span></div>
+          <div class="spec-row"><span class="spec-label">Диаметр</span><span class="spec-val">Ø 80–800 мм</span></div>
+          <div class="spec-row"><span class="spec-label">Длина</span><span class="spec-val">3000–5000 мм</span></div>
+          <div class="spec-row"><span class="spec-label">Толщина стенки</span><span class="spec-val">6–25 мм</span></div>
+          <div class="spec-row"><span class="spec-label">Рабочее давление</span><span class="spec-val">до 1,6 МПа</span></div>
+          <div class="spec-row"><span class="spec-label">Стандарт</span><span class="spec-val">ГОСТ 9583-75</span></div>
+          <div class="spec-row"><span class="spec-label">Применение</span><span class="spec-val">ЖКХ, водоснабжение</span></div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-visual disk-visual">
+          <img class="product-image" src="https://gerat.ru/upload/iblock/e66/v1k2ehp4vozy4ah9jfc4c427np56dl5n/24EQ6z572K.png" alt="Стальные тормозные диски">
+        </div>
+        <div class="product-info">
+          <h3>Тормозные диски стальные</h3>
+          <div class="spec-row"><span class="spec-label">Материал</span><span class="spec-val">Сталь 30Х, 35Л</span></div>
+          <div class="spec-row"><span class="spec-label">Диаметр</span><span class="spec-val">Ø 200–450 мм</span></div>
+          <div class="spec-row"><span class="spec-label">Высота</span><span class="spec-val">20–60 мм</span></div>
+          <div class="spec-row"><span class="spec-label">Масса</span><span class="spec-val">5–40 кг</span></div>
+          <div class="spec-row"><span class="spec-label">Твёрдость</span><span class="spec-val">180–220 HB</span></div>
+          <div class="spec-row"><span class="spec-label">Чистота поверхности</span><span class="spec-val">Ra 1,6–3,2 мкм</span></div>
+          <div class="spec-row"><span class="spec-label">Применение</span><span class="spec-val">Грузовой автотранспорт</span></div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-visual roll-visual">
+          <img class="product-image" src="https://image.made-in-china.com/2f0j00BLGcMZoRZgzm/Metallurgy-Industry-Plate-Mill-Rolling-Roller-Iciii-Alloy-Infinite-Cold-Hard-Cast-Iron-Mill-Rolls.jpg" alt="Прокатные валки">
+        </div>
+        <div class="product-info">
+          <h3>Прокатные валки чугунные</h3>
+          <div class="spec-row"><span class="spec-label">Материал</span><span class="spec-val">Отбелённый чугун, СПХН</span></div>
+          <div class="spec-row"><span class="spec-label">Диаметр бочки</span><span class="spec-val">Ø 300–900 мм</span></div>
+          <div class="spec-row"><span class="spec-label">Длина бочки</span><span class="spec-val">800–2500 мм</span></div>
+          <div class="spec-row"><span class="spec-label">Масса</span><span class="spec-val">800–15 000 кг</span></div>
+          <div class="spec-row"><span class="spec-label">Твёрдость рабочего слоя</span><span class="spec-val">500–650 HB</span></div>
+          <div class="spec-row"><span class="spec-label">Глубина отбела</span><span class="spec-val">15–50 мм</span></div>
+          <div class="spec-row"><span class="spec-label">Применение</span><span class="spec-val">Прокатные станы</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOM -->
+<div class="page" id="page-custom">
+  <div class="section">
+    <p class="section-tag">Кастомизация</p>
+    <h2>Возможности настройки продукции</h2>
+    <div class="custom-intro">
+      <p>Центробежное литьё позволяет гибко изменять параметры отливок в рамках технологических ограничений. Заказчик может задать химический состав, геометрию, механические свойства и финишную обработку поверхности.</p>
+      <p>Изменения вносятся на этапе проектирования технологического процесса — изложница изготавливается под конкретный заказ, что позволяет выпускать уникальные позиции даже небольшими партиями от 10 штук.</p>
+    </div>
+
+    <div class="custom-options">
+      <div class="option-card">
+        <span class="option-icon">⚗️</span>
+        <h3>Химический состав</h3>
+        <p>Легирование никелем, хромом, молибденом, медью. Изменяет прочность, коррозионную стойкость, износостойкость. Возможно получение высокопрочного чугуна с шаровидным графитом (ВЧШГ).</p>
+      </div>
+      <div class="option-card">
+        <span class="option-icon">📐</span>
+        <h3>Геометрия и размеры</h3>
+        <p>Диаметр от 50 до 1200 мм, длина до 5 м, толщина стенки от 5 мм. Возможны конусные и ступенчатые профили, фланцы на концах трубы, канавки на внешней поверхности.</p>
+      </div>
+      <div class="option-card">
+        <span class="option-icon">🔥</span>
+        <h3>Термическая обработка</h3>
+        <p>Отжиг для снижения твёрдости и обрабатываемости, нормализация для равномерной структуры, закалка для повышения твёрдости поверхности до 55–60 HRC. Выбирается под условия эксплуатации.</p>
+      </div>
+      <div class="option-card">
+        <span class="option-icon">🔩</span>
+        <h3>Механическая обработка</h3>
+        <p>Токарная обработка наружного и внутреннего диаметра, шлифовка до Ra 0,8 мкм, нарезка резьбы, сверловка отверстий под крепёж. Возможна поставка в состоянии «под сварку».</p>
+      </div>
+      <div class="option-card">
+        <span class="option-icon">🛡️</span>
+        <h3>Покрытия и защита</h3>
+        <p>Эпоксидное покрытие внутри (для труб водоснабжения), цинкование, антикоррозийные грунты, эмалирование. Цинкование по ГОСТ 9.307 увеличивает срок службы в 3–5 раз в агрессивных средах.</p>
+      </div>
+      <div class="option-card">
+        <span class="option-icon">📦</span>
+        <h3>Партия и сроки</h3>
+        <p>Минимальная партия — от 10 штук (при наличии изложницы) или от 50 штук (с изготовлением новой оснастки). Срок производства серийной позиции — 5–15 рабочих дней.</p>
+      </div>
+    </div>
+
+    <div class="limits-box">
+      <h3>Технологические ограничения</h3>
+      <div class="limits-grid">
+        <div class="limit-item">
+          <strong>Только тела вращения</strong>
+          <span>Метод не применим для сложных пространственных форм без оси симметрии</span>
+        </div>
+        <div class="limit-item">
+          <strong>Внутренняя поверхность</strong>
+          <span>Требует механической обработки — свободная поверхность имеет Ra 12,5–25 мкм</span>
+        </div>
+        <div class="limit-item">
+          <strong>Сегрегация примесей</strong>
+          <span>Лёгкие элементы (P, S, шлак) скапливаются у внутренней поверхности — слой срезается</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACTS -->
+<div class="page" id="page-contacts">
+  <div class="section">
+    <p class="section-tag">Контакты</p>
+    <h2>Связаться с нами</h2>
+    <div class="contacts-grid">
+      <div>
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-label">Адрес</div>
+            <div class="contact-val">Москва, ул. Литейная, д. 12, стр. 1<br>Производственный корпус №3</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div>
+            <div class="contact-label">Телефон</div>
+            <div class="contact-val">+7 (495) 123-45-67</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <div>
+            <div class="contact-label">E-mail</div>
+            <div class="contact-val">info@centrolit.ru</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">🕐</div>
+          <div>
+            <div class="contact-label">Режим работы</div>
+            <div class="contact-val">Пн–Пт: 08:00–17:00<br>Сб–Вс: выходной</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">🏭</div>
+          <div>
+            <div class="contact-label">Производство</div>
+            <div class="contact-val">Литейный и механосборочный комплекс<br>Отдел технического сопровождения заказов</div>
+          </div>
+        </div>
+      </div>
+      <div class="map-container">
+        <iframe
+          src="https://www.openstreetmap.org/export/embed.html?bbox=37.55%2C55.72%2C37.70%2C55.80&layer=mapnik&marker=55.760%2C37.625"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">ЦентроЛит</div>
+  <div>Центробежное литьё чёрных металлов · 2025</div>
+</footer>
+
+<script>
+  function showPage(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
